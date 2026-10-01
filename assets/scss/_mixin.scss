@@ -1,0 +1,48 @@
+//-----------------------------------------------------------------//
+//  Lish 標準 mixin
+//
+//  ★ このファイルは親テーマ lish が正本。
+//     子テーマ（案件）には assets/scss/common/_mixin.scss として
+//     同内容がコピー配布される（D1: コピー配布方式）。
+//     親側でこのファイルを更新したら docs/UPGRADING.md に差し替え手順を記載する。
+//-----------------------------------------------------------------//
+
+// ===== ブレークポイント（768px 1点のみ / max-width基準） =====
+// PCを既定として書き、SP差分を sp() で上書きする。
+// 中間ブレークポイント（tablet / mini）は設けない。
+//
+//   .p-foo {
+//     display: flex;                   // PC
+//     @include sp { display: block; }  // 768px以下
+//   }
+@mixin sp {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+// 横方向だけセンタリング
+@mixin abs_center_w {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// 中央配置
+@mixin abs_center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// clearfix
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+    height: 0;
+    visibility: hidden;
+  }
+}

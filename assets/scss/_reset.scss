@@ -1,0 +1,45 @@
+// ===== 汎用リセット（destyle の補完） =====
+// 案件デザインに依存しない、全案件で常に同じであるべきものだけを置く。
+// フォント / 色 / hover の効き方など「デザインの判断」が入るものは子テーマ側。
+
+img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+}
+
+li {
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+main {
+  display: block;
+}
+// ※ main の overflow は「横スクロール防止」というデザイン判断であり、
+//   position: sticky を子孫で使うと効かなくなる副作用があるため、親には置かない。
+//   必要な案件は子テーマの foundation/_base.scss で指定する。
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}

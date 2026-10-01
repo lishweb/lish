@@ -1,0 +1,12 @@
+node_modules/
+.tmp/
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+.claude/settings.local.json
+
+# ★ assets/css/*.css はビルド成果物だが「コミットする」（配布物のため）

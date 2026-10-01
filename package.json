@@ -1,0 +1,24 @@
+{
+  "name": "lish",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Lish 親テーマ。共通CSS（lish-foundation.css / lish-blocks.css）のビルドのみを行う。案件のSCSSは子テーマ側でビルドする。",
+  "scripts": {
+    "build": "npm run build:sass && npm run build:postcss && npm run build:blocks",
+    "build:sass": "sass assets/scss/lish-foundation.scss assets/css/lish-foundation.css --no-source-map --style=expanded",
+    "build:postcss": "postcss assets/css/lish-foundation.css --use autoprefixer --no-map --replace",
+    "build:blocks": "sass assets/scss/lish-blocks.scss assets/css/lish-blocks.css --no-source-map --style=expanded && postcss assets/css/lish-blocks.css --use autoprefixer --no-map --replace",
+    "watch": "sass --watch assets/scss/lish-foundation.scss:assets/css/lish-foundation.css assets/scss/lish-blocks.scss:assets/css/lish-blocks.css --no-source-map --style=expanded"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not kaios > 0"
+  ],
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.83.4"
+  }
+}

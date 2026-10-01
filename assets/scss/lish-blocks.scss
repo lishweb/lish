@@ -1,0 +1,1315 @@
+@charset "UTF-8";
+@use "mixin" as *;
+
+// ===================================================================
+//  lish-blocks.css のソース（親テーマ lish / 1.1.0〜）
+//
+//  出力先: lish/assets/css/lish-blocks.css
+//  ビルド: npm run build（親テーマのリリース時のみ実行してコミットする）
+//
+//  ブログ記事で使うブロックスタイル（is-style-lish-*）とパターン用クラス（lish-*）の見た目。
+//  フロントと編集画面の両方に読み込まれる（inc/blocks/setup.php）。
+//
+//  ・色は :root の --lish-blocks-* だけを使う。案件の色は子テーマの app.css で上書きする:
+//      :root { --lish-blocks-main: #061c43; }
+//  ・単位は em（記事本文の文字サイズに追従させる）。レイアウトは flex のみ。
+//  ・フロントの .c-entry-content（lish-entry-content.css）より後に読み込まれる前提で、
+//    同じ詳細度で勝つように書いている（!important は使わない）。
+//  ・クラス名は公開 API（docs/API.md §7）。変更は MAJOR。
+// ===================================================================
+
+// ===== アイコン（Font Awesome を使わず SVG を埋め込む） =====
+// mask-image 用（黒で描き、色は background-color で付ける）
+$icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12.5l5 5L20 6.5' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+$icon-megaphone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 10v4a1 1 0 0 0 1 1h2l1.2 5h2.6l-1.2-5H9l8 4V5L9 9H4a1 1 0 0 0-1 1zm16-1.8v7.6a3.8 3.8 0 0 0 0-7.6z'/%3E%3C/svg%3E");
+$icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 17.25V20h2.75L17.8 8.94l-2.75-2.75zM20.7 6.04a1 1 0 0 0 0-1.41l-1.34-1.34a1 1 0 0 0-1.41 0l-1.13 1.13 2.75 2.75z'/%3E%3C/svg%3E");
+$icon-chevron-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+$icon-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E");
+$icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2.2' stroke-linejoin='round'%3E%3Crect x='8' y='8' width='12' height='13' rx='2'/%3E%3Cpath d='M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2'/%3E%3C/g%3E%3C/svg%3E");
+$icon-newspaper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h13v14a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2zm13 5h3v9a2 2 0 0 1-4 0V9zM7 7v4h7V7zm0 6v1.6h7V13zm0 3.4V18h7v-1.6z' fill-rule='evenodd'/%3E%3C/svg%3E");
+$icon-chevron-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6l6 6-6 6' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+$icon-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 6l12 12M18 6L6 18' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+$icon-mark-circle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='none' stroke='%23000' stroke-width='2.6'/%3E%3C/svg%3E");
+$icon-mark-double-circle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23000' stroke-width='2.2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Ccircle cx='12' cy='12' r='5.2'/%3E%3C/g%3E%3C/svg%3E");
+$icon-mark-triangle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.5l9.5 17h-19z' fill='none' stroke='%23000' stroke-width='2.4' stroke-linejoin='round'/%3E%3C/svg%3E");
+// background-image 用（白で描く）
+$icon-list-white: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6h11M9 12h11M9 18h11' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='4.5' cy='6' r='1.6' fill='%23fff'/%3E%3Ccircle cx='4.5' cy='12' r='1.6' fill='%23fff'/%3E%3Ccircle cx='4.5' cy='18' r='1.6' fill='%23fff'/%3E%3C/svg%3E");
+$icon-check-white: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 12.5l5 5L20 6.5' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+@mixin icon-mask($icon) {
+  -webkit-mask: $icon center / contain no-repeat;
+  mask: $icon center / contain no-repeat;
+}
+
+// ===== 色・角丸（子テーマで :root を上書きする） =====
+:root {
+  --lish-blocks-main: #009ef3;      // ボタン・見出しの線・ラベル・表の見出し列
+  --lish-blocks-accent: #ffb36b;    // 丸ラベル・アクセント枠
+  --lish-blocks-sub: #8bb2da;       // 角タイトル付きボックス・著者ボックス
+  --lish-blocks-text: #333333;      // ボックス内の文字・番号
+  --lish-blocks-bg: #f5f5f5;        // 目次・要点ボックスなどの背景
+  --lish-blocks-bg-soft: #fffded;   // アクセント枠・斜線背景
+  --lish-blocks-border: #cdcdcd;    // 点線・区切り線
+  --lish-blocks-merit: #07a825;
+  --lish-blocks-demerit: #e66b6a;
+  --lish-blocks-link: #4f96f6;
+  --lish-blocks-star: #f5b301;
+  --lish-blocks-share-x: #000000;  // X 共有ボタン
+  --lish-blocks-radius: 6px;
+}
+
+// ===================================================================
+//  ボックス（core/group のブロックスタイル）
+// ===================================================================
+$boxes: ".is-style-lish-box-title, .is-style-lish-box-corner, .is-style-lish-box-summary, .is-style-lish-box-check, .is-style-lish-box-accent, .is-style-lish-box-stripe, .is-style-lish-box-message";
+
+:is(#{$boxes}) {
+  position: relative;
+  box-sizing: border-box;
+  margin: 2em 0;
+  padding: 1.2em 1.4em;
+  border-radius: var(--lish-blocks-radius);
+  color: var(--lish-blocks-text);
+
+  @include sp {
+    padding: 1em 1.1em;
+  }
+
+  // 編集画面では内側のコンテナが position: relative になり、ラベルの基準がずれるため戻す
+  > .wp-block-group__inner-container {
+    position: static;
+  }
+
+  // 中身の縦リズム（.c-entry-content p の 1.57em を箱の中では詰める）
+  :is(p, ul, ol, .wp-block-columns, .wp-block-details) {
+    margin-top: 0.6em;
+    margin-bottom: 0;
+  }
+  :is(p, ul, ol, .wp-block-columns, .wp-block-details):first-child,
+  .lish-box-label + * {
+    margin-top: 0;
+  }
+}
+
+// 枠の上辺・角に重なるラベル（パターンでは先頭の段落に lish-box-label を付けている）
+.lish-box-label {
+  margin: 0;
+}
+:is(#{$boxes}) .lish-box-label {
+  position: absolute;
+  box-sizing: border-box;
+  width: auto;
+  max-width: calc(100% - 2em);
+  margin: 0;
+  font-size: 0.9em;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+
+// ----- タイトル付きボックス（丸ラベルが上辺に重なる） -----
+.is-style-lish-box-title {
+  --lish-box-color: var(--lish-blocks-main);
+  margin-top: 2.4em;
+  padding-top: 1.8em;
+  border: 2px solid var(--lish-box-color);
+
+  .lish-box-label {
+    top: 0;
+    left: 1em;
+    min-width: 5em;
+    padding: 0.25em 1em;
+    border-radius: 30px;
+    background-color: var(--lish-box-color);
+    color: #fff;
+    text-align: center;
+    transform: translateY(-50%);
+  }
+}
+
+// ----- 角タイトル付きボックス -----
+.is-style-lish-box-corner {
+  --lish-box-color: var(--lish-blocks-sub);
+  padding-top: 2.8em;
+  border: 2px solid var(--lish-box-color);
+
+  .lish-box-label {
+    top: 0;
+    left: 0;
+    padding: 0.3em 1em;
+    border-radius: 0 0 var(--lish-blocks-radius) 0;
+    background-color: var(--lish-box-color);
+    color: #fff;
+  }
+
+  // チェックアイコンも枠の色に揃える
+  .is-style-lish-check > li::before {
+    background-color: var(--lish-box-color);
+  }
+}
+
+// ----- 要点ボックス（この記事でわかること） -----
+.is-style-lish-box-summary {
+  margin-top: 2.4em;
+  padding-top: 1.9em;
+  background-color: var(--lish-blocks-bg);
+
+  .lish-box-label {
+    top: 0;
+    left: 1em;
+    padding: 0.25em 2em;
+    border-radius: 20px;
+    background-color: var(--lish-blocks-text);
+    color: #fff;
+    transform: translateY(-50%);
+  }
+
+  // 箱の中の通常の箇条書きはメインカラーの点にする
+  ul:not([class*="is-style-"]) {
+    margin-left: 0;
+    padding-left: 0;
+    list-style: none;
+
+    > li {
+      position: relative;
+      padding-left: 1.2em;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0.7em;
+        left: 0.3em;
+        width: 0.45em;
+        height: 0.45em;
+        border-radius: 50%;
+        background-color: var(--lish-blocks-main);
+      }
+    }
+    > li + li {
+      margin-top: 0.3em;
+    }
+  }
+}
+
+// ----- チェックボックス（斜線・枠・中央ラベル） -----
+.is-style-lish-box-check {
+  margin-top: 2.4em;
+  padding-top: 2em;
+  border: 1px solid color-mix(in srgb, var(--lish-blocks-text) 70%, #fff);
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--lish-blocks-text) 4%, #fff) 0 2px,
+    #fff 2px 5px
+  );
+
+  .lish-box-label {
+    top: 0;
+    left: 50%;
+    width: max-content; // left: 50% だと折り返し幅が半分になるため、中身の幅で決める
+    min-width: 40%;
+    padding: 0.5em 2em;
+    border: 1px solid var(--lish-blocks-text);
+    background-color: #fff;
+    text-align: center;
+    transform: translate(-50%, -50%);
+  }
+
+  .wp-block-columns {
+    gap: 0 2em;
+  }
+}
+
+// ----- アクセント枠 -----
+.is-style-lish-box-accent {
+  padding: 0.7em 1.2em;
+  border: 2px solid var(--lish-blocks-accent);
+  background-color: var(--lish-blocks-bg-soft);
+}
+
+// ----- 斜線背景 -----
+.is-style-lish-box-stripe {
+  padding: 0.6em 1.2em;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--lish-blocks-bg-soft) 0 2px,
+    #fff 2px 5px
+  );
+}
+
+// ----- メッセージ（メガホンのアイコン＋縦線） -----
+.is-style-lish-box-message {
+  padding: 1em 1.2em 1em 4em;
+  background-color: color-mix(in srgb, var(--lish-blocks-main) 9%, #fff);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 1em;
+    width: 1.4em;
+    height: 1.4em;
+    background-color: var(--lish-blocks-main);
+    transform: translateY(-50%);
+    @include icon-mask($icon-megaphone);
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0.8em;
+    bottom: 0.8em;
+    left: 3em;
+    width: 1px;
+    background-color: var(--lish-blocks-main);
+  }
+}
+
+// ----- 著者ボックス（タイトル付きボックス + lish-author） -----
+.lish-author {
+  --lish-box-color: var(--lish-blocks-sub);
+
+  .lish-box-label::before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.3em;
+    background-color: currentColor;
+    vertical-align: -0.12em;
+    @include icon-mask($icon-pencil);
+  }
+
+  .lish-author__body {
+    gap: 1em;
+    align-items: flex-start;
+  }
+  .lish-author__photo img {
+    width: 5em;
+    height: 5em;
+    object-fit: cover;
+  }
+  .wp-block-image {
+    margin: 0;
+  }
+  p.lish-author__role {
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    color: color-mix(in srgb, var(--lish-blocks-text) 80%, #fff);
+  }
+  p.lish-author__name {
+    margin-top: 0.1em;
+    font-size: 1.1em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+  p.lish-author__kana {
+    margin-top: 0;
+    font-size: 0.7em;
+    letter-spacing: 0.1em;
+    color: color-mix(in srgb, var(--lish-blocks-text) 70%, #fff);
+  }
+
+  // 詳しいプロフィール（core/details）
+  .lish-author__profile {
+    margin-top: 0.8em;
+
+    > summary {
+      display: inline-block;
+      padding: 0.2em 1em 0.2em 0.7em;
+      border-radius: 5px;
+      background-color: var(--lish-box-color);
+      color: #fff;
+      font-size: 0.8em;
+      font-weight: 700;
+      list-style: none;
+      cursor: pointer;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+      &::before {
+        content: "";
+        display: inline-block;
+        width: 0.9em;
+        height: 0.9em;
+        margin-right: 0.5em;
+        background-color: currentColor;
+        vertical-align: -0.1em;
+        transition: transform 0.2s;
+        @include icon-mask($icon-chevron-down);
+      }
+    }
+    &[open] > summary::before {
+      transform: rotate(180deg);
+    }
+    p {
+      margin-top: 0.6em;
+      font-size: 0.85em;
+    }
+  }
+}
+
+// ===================================================================
+//  リスト（core/list のブロックスタイル）
+// ===================================================================
+
+// ----- チェック -----
+:is(ul, ol).is-style-lish-check {
+  margin: 1em 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    position: relative;
+    padding-left: 1.7em;
+  }
+  > li + li {
+    margin-top: 0.3em;
+  }
+  > li::before {
+    content: "";
+    position: absolute;
+    top: 0.35em;
+    left: 0.15em;
+    width: 1.1em;
+    height: 1.1em;
+    background-color: var(--lish-blocks-main);
+    @include icon-mask($icon-check);
+  }
+}
+
+// 斜線系ボックスの中では点線で区切る
+:is(.is-style-lish-box-check, .is-style-lish-box-stripe) .is-style-lish-check {
+  > li {
+    padding: 0.55em 0 0.55em 2.6em;
+    border-bottom: 1px dashed var(--lish-blocks-border);
+  }
+  > li:last-child {
+    border-bottom: 0;
+  }
+  > li + li {
+    margin-top: 0;
+  }
+  > li::before {
+    top: 0.9em;
+    left: 1em;
+  }
+}
+
+// ----- 番号＋縦線 -----
+:is(ul, ol).is-style-lish-number-line {
+  margin: 1em 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: lish-number;
+
+  > li {
+    position: relative;
+    min-height: 1.8em;
+    padding-left: 2.6em;
+    line-height: 1.8;
+    counter-increment: lish-number;
+  }
+  > li + li {
+    margin-top: 0.5em;
+  }
+  > li::before {
+    content: counter(lish-number);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1.8em;
+    border-right: 2px solid var(--lish-blocks-main);
+    color: var(--lish-blocks-text);
+    font-weight: 700;
+    line-height: 1.8;
+    text-align: center;
+  }
+}
+
+// ===================================================================
+//  見出し（core/heading のブロックスタイル）
+// ===================================================================
+
+// ----- 左丸線 -----
+:is(h1, h2, h3, h4, h5, h6).is-style-lish-line-left {
+  position: relative;
+  padding: 0.3em 0.8em 0.3em 1em;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 0.28em;
+    border-radius: 40px;
+    background-color: var(--lish-blocks-main);
+  }
+}
+
+// ----- チェックアイコン -----
+:is(h1, h2, h3, h4, h5, h6).is-style-lish-check-icon {
+  position: relative;
+  padding: 0.45em 0.8em 0.45em 2.6em;
+  background-color: color-mix(in srgb, var(--lish-blocks-main) 16%, #fff);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1.8em;
+    background: var(--lish-blocks-main) $icon-check-white center / 0.9em no-repeat;
+  }
+}
+
+// ===================================================================
+//  表（core/table のブロックスタイル）
+// ===================================================================
+
+// ----- 左列見出し・角丸 -----
+.wp-block-table.is-style-lish-head-col {
+  table {
+    width: 100%;
+    border: 1px solid var(--lish-blocks-main);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--lish-blocks-radius);
+    overflow: hidden;
+  }
+  :is(td, th) {
+    padding: 0.7em 1em;
+    border: 0;
+    border-top: 1px solid var(--lish-blocks-main);
+
+    @include sp {
+      padding: 0.6em 0.8em;
+    }
+  }
+  tr:first-child > :is(td, th) {
+    border-top: 0;
+  }
+  :is(td, th):first-child {
+    width: 30%;
+    border-top: 2px solid #fff;
+    background-color: var(--lish-blocks-main);
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+
+    @include sp {
+      width: 35%;
+    }
+  }
+  tr:first-child > :is(td, th):first-child {
+    border-top: 0;
+  }
+}
+
+// ===================================================================
+//  ボタン（core/button のブロックスタイル）
+// ===================================================================
+
+// ----- 三角付き -----
+.wp-block-button.is-style-lish-triangle .wp-block-button__link {
+  position: relative;
+  padding: 0.6em 2.5em;
+  border-radius: 0;
+  background-color: var(--lish-blocks-main);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.3s;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0.3em;
+    bottom: 0.3em;
+    border-bottom: 0.6em solid #fff;
+    border-left: 0.6em solid transparent;
+  }
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// ===================================================================
+//  比較表（core/table のブロックスタイル）
+// ===================================================================
+.wp-block-table.is-style-lish-compare {
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    min-width: 40em; // SP では横スクロールさせる
+    border-collapse: collapse;
+  }
+  thead {
+    border-bottom: 0;
+  }
+  :is(td, th) {
+    padding: 0.7em 0.6em;
+    border: 1px solid var(--lish-blocks-border);
+    text-align: center;
+    vertical-align: middle;
+  }
+  thead :is(td, th),
+  tbody tr > :is(td, th):first-child {
+    background-color: var(--lish-blocks-bg);
+    font-size: 0.9em;
+    font-weight: 700;
+  }
+  tbody tr > :is(td, th):first-child {
+    white-space: nowrap;
+  }
+  img {
+    width: 5em;
+    height: auto;
+  }
+  figcaption {
+    margin-top: 0.5em;
+    font-size: 0.8em;
+    text-align: center;
+    color: color-mix(in srgb, var(--lish-blocks-text) 70%, #fff);
+  }
+}
+
+// ===================================================================
+//  文字単位の装飾（ツールバー「Lish 装飾」 / lish-blocks-editor.js）
+// ===================================================================
+
+// ----- 傍点 -----
+.lish-emphasis {
+  padding-top: 0.4em;
+  background-image: radial-gradient(circle at center, var(--lish-blocks-text) 20%, transparent 20%);
+  background-position: top right;
+  background-repeat: repeat-x;
+  background-size: 1em 0.3em;
+}
+
+// ----- 丸ラベル -----
+.lish-label {
+  display: inline-block;
+  margin: 0 0.4em;
+  padding: 0.45em 1em;
+  border-radius: 40px;
+  background-color: var(--lish-blocks-accent);
+  color: #fff;
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+// ----- 点滅（動きを減らす設定の人には点滅させない） -----
+.lish-blink {
+  color: var(--lish-blocks-link);
+  animation: lish-blink 1.5s ease-in-out infinite alternate;
+
+  a {
+    color: inherit;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+@keyframes lish-blink {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// ----- メリット（○）/ デメリット（×） -----
+:is(.lish-merit, .lish-demerit)::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.3em;
+  vertical-align: -0.12em;
+}
+.lish-merit::before {
+  background-color: var(--lish-blocks-merit);
+  @include icon-mask($icon-mark-circle);
+}
+.lish-demerit::before {
+  background-color: var(--lish-blocks-demerit);
+  @include icon-mask($icon-cross);
+}
+
+// ----- 評価マーク ◎ ○ △ ×（表のセルで、マークの下に文字を添える） -----
+:is(.lish-mark-double-circle, .lish-mark-circle, .lish-mark-triangle, .lish-mark-cross) {
+  display: inline-block;
+  font-size: 0.85em;
+  line-height: 1.4;
+  text-align: center;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 2em;
+    height: 2em;
+    margin: 0 auto 0.2em;
+  }
+}
+.lish-mark-double-circle::before {
+  background-color: var(--lish-blocks-merit);
+  @include icon-mask($icon-mark-double-circle);
+}
+.lish-mark-circle::before {
+  background-color: var(--lish-blocks-merit);
+  @include icon-mask($icon-mark-circle);
+}
+.lish-mark-triangle::before {
+  background-color: var(--lish-blocks-accent);
+  @include icon-mask($icon-mark-triangle);
+}
+.lish-mark-cross::before {
+  background-color: var(--lish-blocks-demerit);
+  @include icon-mask($icon-cross);
+}
+
+// ----- 星評価（★☆ の文字に使う） -----
+.lish-rate {
+  color: var(--lish-blocks-star);
+  letter-spacing: 0.1em;
+}
+
+// ----- 小ボタン -----
+.lish-inline-btn {
+  display: inline-block;
+  padding: 0.25em 1em;
+  border-radius: 4px;
+  background-color: var(--lish-blocks-main);
+  color: #fff;
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: none;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+// ===================================================================
+//  共有系ボタン（core/button のブロックスタイル / inc/blocks/share.php）
+// ===================================================================
+:is(.is-style-lish-share-x, .is-style-lish-copy-url) .wp-block-button__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0 0.5em;
+  padding: 0.7em 2em;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.3s;
+
+  &::before {
+    content: "";
+    flex: none;
+    width: 1.1em;
+    height: 1.1em;
+    background-color: currentColor;
+  }
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// ----- X で共有 -----
+.is-style-lish-share-x .wp-block-button__link {
+  border-radius: 40px;
+  background-color: var(--lish-blocks-share-x);
+
+  &::before {
+    @include icon-mask($icon-x);
+  }
+}
+
+// ----- URL コピー -----
+.is-style-lish-copy-url {
+  width: 100%;
+  max-width: 30em;
+
+  .wp-block-button__link {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: var(--lish-blocks-radius);
+    background-color: var(--lish-blocks-text);
+
+    &::before {
+      @include icon-mask($icon-copy);
+    }
+    &.is-copied::before {
+      @include icon-mask($icon-check);
+    }
+  }
+}
+
+// URL コピーの代替処理で使う一時的な textarea（lish-blocks.js）
+.lish-copy-buffer {
+  position: fixed;
+  top: -9999px;
+  left: 0;
+  opacity: 0;
+}
+
+// ===================================================================
+//  記事カード（独自ブロック lish/post-card / inc/blocks/post-card.php）
+// ===================================================================
+.lish-post-card {
+  margin: 1.5em 0;
+}
+.lish-post-card__link {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--lish-blocks-border);
+  border-radius: var(--lish-blocks-radius);
+  background-color: #fff;
+  color: var(--lish-blocks-text);
+  text-decoration: none;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 6%);
+  transition: box-shadow 0.3s, transform 0.3s;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgb(0 0 0 / 12%);
+  }
+}
+.lish-post-card__thumb {
+  flex: 0 0 32%;
+  line-height: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  @include sp {
+    flex-basis: 36%;
+  }
+}
+.lish-post-card__body {
+  flex: 1;
+  min-width: 0;
+  padding: 1em 1.2em 2.8em;
+
+  @include sp {
+    padding: 0.8em 0.9em 2.6em;
+  }
+}
+.lish-post-card__title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: 700;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow-wrap: anywhere; // サイト外 URL をタイトル代わりに出すときも折り返す
+
+  @include sp {
+    font-size: 0.9em;
+  }
+}
+.lish-post-card__date {
+  display: block;
+  margin-top: 0.4em;
+  font-size: 0.75em;
+  color: color-mix(in srgb, var(--lish-blocks-text) 70%, #fff);
+}
+.lish-post-card__label {
+  position: absolute;
+  z-index: 1;
+  top: 0.6em;
+  left: 0.6em;
+  padding: 0.35em 0.7em;
+  background-color: var(--lish-blocks-main);
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+
+  @include sp {
+    border-radius: 14px;
+  }
+}
+.lish-post-card__more {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0.45em 2.8em 0.45em 1.2em;
+  border-radius: var(--lish-blocks-radius) 0 0 0;
+  background-color: var(--lish-blocks-main);
+  color: #fff;
+  font-size: 0.8em;
+  line-height: 1.35;
+  letter-spacing: 0.1em;
+  transition: opacity 0.3s;
+
+  // 右端の白丸＋矢印
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0.9em;
+    width: 1.2em;
+    height: 1.2em;
+    transform: translateY(-50%);
+  }
+  &::before {
+    border-radius: 50%;
+    background-color: #fff;
+  }
+  &::after {
+    background-color: var(--lish-blocks-main);
+    -webkit-mask: $icon-chevron-right center / 0.7em no-repeat;
+    mask: $icon-chevron-right center / 0.7em no-repeat;
+  }
+}
+.lish-post-card__link:hover .lish-post-card__more {
+  opacity: 0.8;
+}
+
+// ----- スタイル B: あわせて読みたい -----
+.lish-post-card.is-style-lish-card-b {
+  margin-top: 2em;
+
+  .lish-post-card__link {
+    gap: 1em;
+    padding: 1.2em 1em 2.6em;
+    border: 2px solid color-mix(in srgb, var(--lish-blocks-main) 45%, #fff);
+    overflow: visible;
+
+    &:hover {
+      transform: scale(1.02);
+
+      @media (prefers-reduced-motion: reduce) {
+        transform: none;
+      }
+    }
+  }
+  .lish-post-card__thumb {
+    flex-basis: 30%;
+
+    img {
+      border-radius: calc(var(--lish-blocks-radius) / 2);
+    }
+  }
+  .lish-post-card__body {
+    padding: 0;
+  }
+  .lish-post-card__label {
+    top: 0;
+    left: 0.8em;
+    border-radius: 2px;
+    background-color: color-mix(in srgb, var(--lish-blocks-main) 45%, #fff);
+    transform: translateY(-60%);
+  }
+  .lish-post-card__more {
+    right: 1em;
+    bottom: 0.7em;
+    padding: 0.3em 1.4em;
+    border-radius: 2px;
+    font-size: 0.75em;
+    font-weight: 700;
+
+    &::before {
+      display: none;
+    }
+    &::after {
+      content: " »";
+      position: static;
+      width: auto;
+      height: auto;
+      background: none;
+      transform: none;
+      -webkit-mask: none;
+      mask: none;
+    }
+  }
+}
+
+// ----- あわせて読みたいボックス（タイトル付きボックス + lish-related） -----
+.lish-related {
+  .lish-box-label::before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.3em;
+    background-color: currentColor;
+    vertical-align: -0.12em;
+    @include icon-mask($icon-newspaper);
+  }
+  .lish-post-card {
+    margin: 0.8em 0 0;
+  }
+  .lish-box-label + .lish-post-card {
+    margin-top: 0;
+  }
+}
+
+// 編集画面のプレビュー（リンクを押しても移動しないようにする）
+.lish-post-card-editor__preview {
+  pointer-events: none;
+}
+.lish-post-card-editor__input {
+  margin-bottom: 0.8em;
+
+  .block-editor-url-input,
+  input {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+// ===================================================================
+//  記事一覧（core/query / パターン post-list）
+// ===================================================================
+.lish-post-list {
+  margin: 2em 0;
+
+  .wp-block-post-template {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .wp-block-post-featured-image {
+    margin: 0;
+
+    img {
+      border-radius: calc(var(--lish-blocks-radius) * 2);
+    }
+  }
+  .wp-block-post-title {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 700;
+    line-height: 1.5;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+  .wp-block-post-date {
+    margin-top: 0.3em;
+    font-size: 0.75em;
+    color: color-mix(in srgb, var(--lish-blocks-text) 70%, #fff);
+  }
+}
+.lish-post-list__large .wp-block-post-title {
+  margin-top: 0.6em;
+  font-size: 1.1em;
+}
+.lish-post-list__small {
+  .wp-block-post {
+    display: flex;
+    align-items: flex-start;
+    gap: 0 0.9em;
+  }
+  .wp-block-post + .wp-block-post {
+    margin-top: 1em;
+  }
+  .wp-block-post-featured-image {
+    flex: 0 0 40%;
+  }
+  .lish-post-list__body {
+    flex: 1;
+    min-width: 0;
+  }
+  .wp-block-post-title {
+    font-size: 0.9em;
+  }
+}
+
+// ===================================================================
+//  目次（独自ブロック lish/toc / inc/blocks/toc.php）
+// ===================================================================
+
+// 大見出しの番号を丸で囲む（帯タイトル・丸番号のスタイルで共用）
+@mixin toc-circle-number {
+  .lish-toc__list {
+    counter-reset: lish-toc;
+
+    > .lish-toc__item {
+      position: relative;
+      min-height: 1.8em;
+      padding-left: 2.5em;
+      counter-increment: lish-toc;
+
+      > a {
+        font-weight: 700;
+      }
+      &::before {
+        content: counter(lish-toc);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1.8em;
+        height: 1.8em;
+        border-radius: 50%;
+        background-color: var(--lish-blocks-main);
+        color: #fff;
+        font-size: 0.95em;
+        line-height: 1.8;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.lish-toc {
+  --lish-toc-bg: var(--lish-blocks-bg);
+  position: relative;
+  box-sizing: border-box;
+  margin: 2em 0;
+  padding: 1.2em 1.6em;
+  border-radius: var(--lish-blocks-radius);
+  background-color: var(--lish-toc-bg);
+  color: var(--lish-blocks-text);
+
+  @include sp {
+    padding: 1em 1.1em;
+  }
+
+  ol.lish-toc__list,
+  ol.lish-toc__sub {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  ol.lish-toc__sub {
+    margin-top: 0.2em;
+    padding-left: 1.2em;
+  }
+  .lish-toc__item {
+    margin: 0.35em 0;
+    line-height: 1.6;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  .lish-toc__title {
+    width: auto;
+    margin: 0 0 0.6em;
+    font-size: 1.1em;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  // 開閉ボタン（details）
+  summary.lish-toc__title {
+    display: flex;
+    align-items: center;
+    gap: 0 0.5em;
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &::after {
+      content: "";
+      flex: none;
+      width: 0.9em;
+      height: 0.9em;
+      background-color: currentColor;
+      transition: transform 0.2s;
+      @include icon-mask($icon-chevron-down);
+    }
+  }
+  .lish-toc__details[open] > summary::after {
+    transform: rotate(180deg);
+  }
+  .lish-toc__details:not([open]) > summary {
+    margin-bottom: 0;
+  }
+}
+
+// ----- もっと見る（lish-blocks.js が is-collapsed を付け外しする） -----
+.lish-toc.is-collapsed .lish-toc__body {
+  position: relative;
+  max-height: 16em;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 6em;
+    background: linear-gradient(transparent, var(--lish-toc-bg));
+  }
+}
+.lish-toc__more {
+  display: block;
+  margin: 0.8em auto 0;
+  padding: 0.6em 2.5em;
+  border: 0;
+  border-radius: var(--lish-blocks-radius);
+  background-color: var(--lish-blocks-main);
+  color: #fff;
+  font: inherit;
+  font-size: 0.9em;
+  font-weight: 700;
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// ----- ① シンプル（既定） -----
+.lish-toc:not(.is-style-lish-toc-band, .is-style-lish-toc-circle, .is-style-lish-toc-minimal) {
+  .lish-toc__list > .lish-toc__item > a::before {
+    content: "";
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    margin-right: 0.45em;
+    background-color: var(--lish-blocks-main);
+    vertical-align: -0.1em;
+    @include icon-mask($icon-chevron-down);
+  }
+}
+
+// ----- ② 帯タイトル＋番号 -----
+.lish-toc.is-style-lish-toc-band {
+  --lish-toc-bg: #fff;
+  padding: 0;
+  border: 2px solid var(--lish-blocks-main);
+  overflow: hidden;
+  @include toc-circle-number;
+
+  .lish-toc__title {
+    justify-content: center;
+    margin: 0;
+    padding: 0.5em 1em;
+    background-color: var(--lish-blocks-main);
+    color: #fff;
+    text-align: center;
+  }
+  .lish-toc__body {
+    padding: 1em 1.6em 1.2em;
+
+    @include sp {
+      padding: 0.9em 1.1em 1em;
+    }
+  }
+  .lish-toc__more {
+    margin: 0 auto 1.2em;
+  }
+  // 小見出しは「1-1」の形
+  ol.lish-toc__sub {
+    padding-left: 0;
+    counter-reset: lish-toc-sub;
+
+    > .lish-toc__item {
+      counter-increment: lish-toc-sub;
+
+      &::before {
+        content: counter(lish-toc) "-" counter(lish-toc-sub);
+        margin-right: 0.6em;
+        color: var(--lish-blocks-main);
+        font-size: 0.85em;
+      }
+    }
+  }
+}
+
+// ----- ③ 丸番号＋縦線 -----
+.lish-toc.is-style-lish-toc-circle {
+  --lish-toc-bg: #fff;
+  padding: 1.6em 2em;
+  border: 2px solid color-mix(in srgb, var(--lish-blocks-main) 45%, #fff);
+  @include toc-circle-number;
+
+  @include sp {
+    padding: 1.2em 1.1em;
+  }
+
+  .lish-toc__title {
+    justify-content: center;
+    margin: 0;
+    color: var(--lish-blocks-main);
+    text-align: center;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 1.5em;
+      height: 1.5em;
+      margin-right: 0.5em;
+      border-radius: 50%;
+      background: var(--lish-blocks-main) $icon-list-white center / 0.9em no-repeat;
+      vertical-align: -0.35em;
+    }
+  }
+  .lish-toc__body {
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid rgb(0 0 0 / 10%);
+  }
+  // 小見出しは、大見出しの丸の中心の下に縦線を引く
+  .lish-toc__list > .lish-toc__item > ol.lish-toc__sub {
+    margin-left: -1.6em;
+    padding-left: 1.2em;
+    border-left: 2px solid color-mix(in srgb, var(--lish-blocks-main) 25%, #fff);
+
+    > .lish-toc__item::before {
+      content: "‣";
+      margin-right: 0.4em;
+      color: color-mix(in srgb, var(--lish-blocks-main) 45%, #fff);
+    }
+  }
+}
+
+// ----- ④ ミニマル -----
+.lish-toc.is-style-lish-toc-minimal {
+  .lish-toc__title {
+    justify-content: center;
+    text-align: center;
+  }
+  .lish-toc__list {
+    counter-reset: lish-toc;
+
+    > .lish-toc__item {
+      counter-increment: lish-toc;
+
+      &::before {
+        content: counter(lish-toc) ".";
+        margin-right: 0.5em;
+        color: var(--lish-blocks-main);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+// 編集画面：見出しが足りないときの案内と、プレビューのリンク
+.lish-toc__notice {
+  margin: 0;
+  font-size: 0.85em;
+  color: color-mix(in srgb, var(--lish-blocks-text) 70%, #fff);
+}
+.block-editor-block-list__block.lish-toc a {
+  pointer-events: none;
+}

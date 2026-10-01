@@ -1,0 +1,21 @@
+# 改行コード方針:
+# テキストファイルはリポジトリ内では LF で統一する。
+# Windows でも checkout 時に LF のまま展開されるため、
+# 受領者環境（Win / Mac / Linux）間で改行コード由来の差分が出ない。
+* text=auto eol=lf
+
+# バイナリは Git の自動判定に任せる（明示しておくと安全）
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.svg text
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.pdf binary
+*.mp4 binary

@@ -1,0 +1,17 @@
+@use "mixin" as *;
+
+// ===== ルートフォント（rem統一の基準: 1rem = 10px） =====
+// PC : 1440pxで1rem=10px（1440px以上は10px固定）。1440px未満は等比縮小。
+// SP : 375pxで1rem=10px。
+// これにより全要素をremで書けば画面幅に等比追従する。
+// clamp / 要素側vw は使わず、このルート基準に一元化する。
+//
+// ★ Lish の全案件共通の土台。子テーマで html の font-size を上書きしないこと。
+html {
+  font-size: min(0.6944444444vw, 10px); // 1440 * 0.0069444444 = 10px
+  scroll-behavior: auto !important;      // スムーススクロールを全面無効化する意図
+
+  @include sp {
+    font-size: 2.66666667vw; // 375 * 0.0266666667 = 10px
+  }
+}
