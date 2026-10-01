@@ -9,6 +9,34 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 
 ---
 
+## [1.2.0] - 2026-10-01
+
+親テーマの自動更新（GitHub Releases 配信）を追加。既存の関数・フック・出力・CSS クラスは変更していない。
+
+### Added
+
+- **自動更新**（`inc/updater/updater.php`）
+  - WP の更新チェックで GitHub（`lishweb/lish`）の最新リリースを確認し、添付の `lish-x.y.z.zip` で親テーマだけを自動更新
+  - 新しい版の `style.css` から `Requires at least` / `Requires PHP` を読み、要件を満たさないサイトには入れない
+  - メジャー版（2.0.0 等）は自動更新しない（管理画面から手動で更新）
+  - `lish/` に `.git` がある環境（開発環境）では更新を出さない（WP 本体の判定は `themes/` より上しか見ないため）
+  - 成功時のメールは送らない。失敗時のみ `web@lishinc.com` へ通知
+  - 管理画面の「再確認」ではキャッシュを使わずに GitHub を見に行く
+- フィルタ `lish/auto_update` `lish/update_notify_email`
+- 配布の手順書 `docs/RELEASE.md`
+- 配布 zip から開発用ファイルを外す `export-ignore`（`.gitattributes`）
+
+### Changed
+
+- `Theme URI` / `Update URI` を `https://github.com/lishweb/lish` に変更（リポジトリ移転）
+- `lish/update_source` は旧方式として残す（値があれば従来どおりその JSON を使う）
+
+### 導入時の注意
+
+- 1.1.0 以前には更新の仕組みが無いため、**1.2.0 だけは各サイトへ手動で入れる**。以降は自動。
+
+---
+
 ## [1.1.0] - 2026-09-25
 
 ブログ記事で使うデザインパターン（ブロックスタイル・パターン・文字装飾・独自ブロック）を追加。
@@ -126,5 +154,6 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 - `get_the_custom_excerpt()` → `lish_excerpt()`（2.0.0 で削除予定）
 - `my_theme_breadcrumbs()` → `lish_breadcrumb()`（2.0.0 で削除予定）
 
-[1.0.0]: https://github.com/lishweb/lish/releases/tag/v1.0.0
+[1.2.0]: https://github.com/lishweb/lish/releases/tag/v1.2.0
 [1.1.0]: https://github.com/lishweb/lish/releases/tag/v1.1.0
+[1.0.0]: https://github.com/lishweb/lish/releases/tag/v1.0.0

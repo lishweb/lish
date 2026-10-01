@@ -1,6 +1,6 @@
 # Lish 公開 API リファレンス
 
-対象バージョン: **Lish 1.1.0**
+対象バージョン: **Lish 1.2.0**
 
 子テーマ（案件）から使える関数・フック・クラス契約の一覧。
 **ここに載っているものだけが「公開 API」**で、後方互換が保証される（変更は MAJOR バージョンのみ）。
@@ -274,11 +274,22 @@ add_filter('lish/breadcrumb/items', function ($items) {
 add_filter('lish/security/disable_xmlrpc', '__return_false');
 ```
 
-### 更新配信
+### 更新配信（1.2.0〜 GitHub Releases から自動更新）
+
+親テーマは GitHub（`lishweb/lish`）の最新リリースを WP の更新チェック（1日2回）で調べ、**親テーマだけを自動で差し替える**。
+子テーマ・`wp-config.php` の設定は不要。メジャー版（2.0.0 等）は自動更新しない。
+`lish/` に `.git` がある環境（開発環境）では更新を出さない。配布の手順は `docs/RELEASE.md`。
 
 | フィルタ | 既定値 | 用途 |
 |---|---|---|
-| `lish/update_source` | `''` | 更新情報 JSON の URL。空なら更新チェックしない |
+| `lish/auto_update` | `true` | `false` でそのサイトだけ自動更新を止める（更新は管理画面から手動で可能） |
+| `lish/update_notify_email` | `'web@lishinc.com'` | 自動更新が**失敗したとき**の通知先。空文字で通知しない。成功時は誰にも送らない |
+| `lish/update_source` | `''` | 更新情報 JSON の URL（旧方式）。値があれば GitHub ではなくこの JSON を使う |
+
+```php
+// 検証環境で自動更新を止める
+add_filter('lish/auto_update', '__return_false');
+```
 
 ---
 
@@ -431,6 +442,7 @@ lish_blocks_register_styles / lish_blocks_register_patterns / lish_blocks_enqueu
 lish_blocks_render_share_button / lish_blocks_register_post_card / lish_blocks_render_post_card
 lish_blocks_register_toc / lish_blocks_render_toc / lish_toc_add_heading_ids
 lish_check_for_update / lish_fetch_update_info / lish_update_source / lish_deprecated_function
+lish_auto_update_theme / lish_auto_update_send_email / lish_auto_update_notify_failure
 ```
 
 挙動を変えたい場合は、まず**フィルタで解決できないか**を確認する（§4）。

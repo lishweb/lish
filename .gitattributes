@@ -19,3 +19,11 @@
 *.zip binary
 *.pdf binary
 *.mp4 binary
+
+# 配布 zip（git archive）から外す開発用ファイル。サイトに置く必要がないもの。
+.claude export-ignore
+CLAUDE.md export-ignore
+package.json export-ignore
+package-lock.json export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
