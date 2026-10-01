@@ -57,7 +57,9 @@ git archive --prefix=lish/ -o lish-1.2.1.zip v1.2.1
 3. **Release title**: `Lish 1.2.1`
 4. 説明欄に `CHANGELOG.md` の該当項目を貼る
 5. **Attach binaries** に `lish-1.2.1.zip` をドラッグ（ファイル名は `lish-` で始まり `.zip` で終わること）
-6. 試験配布なら **Set as a pre-release** にチェック（各サイトには配られない）。本番なら **Set as the latest release**
+6. **Release label** を選ぶ
+   - 本番配布: **None**（最新版として各サイトに配られる）
+   - 試験配布: **Pre-release**（各サイトには配られない）
 7. **Publish release**
 
 > zip を添付し忘れると、サイト側は「更新なし」と判断する（壊れはしない）。後から添付すれば次回のチェックで配られる。
@@ -79,7 +81,9 @@ git archive --prefix=lish/ -o lish-1.2.1.zip v1.2.1
 
 - GitHub の最新リリースから `lish-x.y.z.zip` をダウンロードし、管理画面の「外観 → テーマ → 新規追加 → テーマのアップロード」で入れる。
 - 以降は自動で更新される。設定は不要。
-- **1.1.0 以前が入っているサイト**には更新の仕組みが無いため、1.2.0 以降を一度だけ同じ方法で入れ直す。
+- 同じ名前のテーマが既にある場合は「アップロードしたもので現在のものを置き換える」を押す。
+- **手元の `lish/` フォルダをそのまま上げない**（FTP / All-in-One WP Migration 等）。`.git` が入ると開発環境と判断されて自動更新が止まり、`.claude` や `node_modules` も公開されてしまう。必ずリリースの zip から入れる。
+- 子テーマも、サーバに置くのは動作に要るファイルだけ（`.git` `.claude` `.tmp` `node_modules` `tools` `CLAUDE.md` `package*.json` 等は上げない）。
 
 ## 自動更新されない環境
 

@@ -9,6 +9,17 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 
 ---
 
+## [1.2.1] - 2026-10-01
+
+ドキュメントのみの更新（自動更新の初回動作確認を兼ねる）。テーマの動作・出力は変更していない。
+
+### Changed
+
+- `docs/RELEASE.md`: リリース作成画面の説明を現在の GitHub（Release label: None / Pre-release）に合わせた
+- `docs/RELEASE.md`: サイトへ入れるときの注意（リリースの zip から入れる・手元のフォルダや移行プラグインで上げない）を追加。1.1.0 以前からの入れ直しの説明を削除（該当サイトなし）
+
+---
+
 ## [1.2.0] - 2026-10-01
 
 親テーマの自動更新（GitHub Releases 配信）を追加。既存の関数・フック・出力・CSS クラスは変更していない。
@@ -154,6 +165,7 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 - `get_the_custom_excerpt()` → `lish_excerpt()`（2.0.0 で削除予定）
 - `my_theme_breadcrumbs()` → `lish_breadcrumb()`（2.0.0 で削除予定）
 
+[1.2.1]: https://github.com/lishweb/lish/releases/tag/v1.2.1
 [1.2.0]: https://github.com/lishweb/lish/releases/tag/v1.2.0
 [1.1.0]: https://github.com/lishweb/lish/releases/tag/v1.1.0
 [1.0.0]: https://github.com/lishweb/lish/releases/tag/v1.0.0
