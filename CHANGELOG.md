@@ -126,4 +126,5 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 - `get_the_custom_excerpt()` → `lish_excerpt()`（2.0.0 で削除予定）
 - `my_theme_breadcrumbs()` → `lish_breadcrumb()`（2.0.0 で削除予定）
 
-[1.0.0]: https://github.com/lishinc/lish/releases/tag/v1.0.0
+[1.0.0]: https://github.com/lishweb/lish/releases/tag/v1.0.0
+[1.1.0]: https://github.com/lishweb/lish/releases/tag/v1.1.0
