@@ -1,6 +1,6 @@
 # Lish 公開 API リファレンス
 
-対象バージョン: **Lish 1.2.1**
+対象バージョン: **Lish 1.3.0**
 
 子テーマ（案件）から使える関数・フック・クラス契約の一覧。
 **ここに載っているものだけが「公開 API」**で、後方互換が保証される（変更は MAJOR バージョンのみ）。
@@ -94,6 +94,11 @@ $items = lish_get_breadcrumb_items();
 
 `<head>` の共通メタ（charset / viewport / OGP / favicon / Webフォント）を出力する。
 **親の `header.php` が呼ぶ**ので、子テーマから呼ぶ必要はない。
+
+### `lish_seo_plugin_active(): bool`（1.3.0〜）
+
+SEO プラグイン（All in One SEO / Yoast SEO / Rank Math / SEOPress）が有効なら `true`。
+Lish はこれが `true` のとき description / OGP を出さない（`lish/enable_ogp` の既定値）。判定は `lish/seo_plugin_active` で上書きできる。
 
 ### `lish_uri( string $path = '' ): string` / `lish_project_uri( string $path = '' ): string`
 
@@ -196,7 +201,8 @@ add_filter('lish/image_sizes', function ($sizes) {
 | `lish/ogp/twitter_card` | `summary_large_image` | Twitter Card 種別 |
 | `lish/ogp/twitter_site` | `''` | X アカウント（`@` 不要） |
 | `lish/ogp/fb_admins` / `lish/ogp/fb_app_id` | `''` | Facebook 連携 |
-| `lish/enable_ogp` | `true` | OGP 出力の on/off（SEOプラグインを使う場合は `false`） |
+| `lish/enable_ogp` | SEO プラグインが無ければ `true`（1.3.0〜） | description / OGP / Twitter Card 出力の on/off。SEO プラグイン（AIOSEO / Yoast / Rank Math / SEOPress）が有効なら既定で `false`。両方出したいときだけ子で `true` を返す |
+| `lish/seo_plugin_active` | 自動判定（1.3.0〜） | `lish_seo_plugin_active()` の判定結果を上書き（一覧に無い SEO プラグインを使う案件で `true` を返す等） |
 | `lish/favicon` | `/assets/img/icon/favicon.ico` | 子テーマ内の favicon パス。ファイルが無ければ出力しない |
 | `lish/touch_icon` | `/assets/img/icon/touch.png` | 同上 |
 | `lish/disable_telephone_detection` | `true` | `format-detection` メタの出力 |
@@ -285,6 +291,7 @@ add_filter('lish/security/disable_xmlrpc', '__return_false');
 | `lish/auto_update` | `true` | `false` でそのサイトだけ自動更新を止める（更新は管理画面から手動で可能） |
 | `lish/update_notify_email` | `'web@lishinc.com'` | 自動更新が**失敗したとき**の通知先。空文字で通知しない。成功時は誰にも送らない |
 | `lish/update_source` | `''` | 更新情報 JSON の URL（旧方式）。値があれば GitHub ではなくこの JSON を使う |
+| `lish/vcs_notice` | 開発用ホスト以外で `true`（1.3.0〜） | `lish/` に `.git` があって自動更新が止まっているとき、ダッシュボードとテーマ画面に警告を出す。開発用ホスト（localhost / `*.local` / `*.test` / `*.localhost`）では出さない |
 
 ```php
 // 検証環境で自動更新を止める
@@ -442,7 +449,7 @@ lish_blocks_register_styles / lish_blocks_register_patterns / lish_blocks_enqueu
 lish_blocks_render_share_button / lish_blocks_register_post_card / lish_blocks_render_post_card
 lish_blocks_register_toc / lish_blocks_render_toc / lish_toc_add_heading_ids
 lish_check_for_update / lish_fetch_update_info / lish_update_source / lish_deprecated_function
-lish_auto_update_theme / lish_auto_update_send_email / lish_auto_update_notify_failure
+lish_auto_update_theme / lish_auto_update_send_email / lish_auto_update_notify_failure / lish_admin_notice_vcs
 ```
 
 挙動を変えたい場合は、まず**フィルタで解決できないか**を確認する（§4）。

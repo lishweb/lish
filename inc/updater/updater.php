@@ -331,3 +331,44 @@ function lish_auto_update_notify_failure($update_results)
         return;
     }
 }
+
+add_action('admin_notices', 'lish_admin_notice_vcs');
+/**
+ * lish/ に .git があって自動更新が止まっているサーバーで、管理画面に知らせる（1.3.0〜）。
+ *
+ * 手元のフォルダを移行プラグイン等でそのまま上げると .git が入り、lish_check_for_update() が
+ * 開発環境と判断して更新を出さなくなる。何も表示されないまま止まるのを防ぐ。
+ * 開発用のホスト（localhost / *.local / *.test 等）では出さない。
+ * ※ Local の wp_get_environment_type() は production を返すため、環境タイプではなくホストで判定する。
+ */
+function lish_admin_notice_vcs()
+{
+    if (!is_dir(get_template_directory() . '/.git') || !current_user_can('update_themes')) {
+        return;
+    }
+    if (!apply_filters('lish/vcs_notice', !_lish_is_dev_host())) {
+        return;
+    }
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if (!$screen || !in_array($screen->id, array('dashboard', 'themes'), true)) {
+        return;
+    }
+
+    echo '<div class="notice notice-warning"><p>'
+        . esc_html__('親テーマ Lish のフォルダに .git があるため、自動更新が止まっています。GitHub Releases の lish-x.y.z.zip でテーマを置き換えてください。', 'lish')
+        . '</p></div>';
+}
+
+/**
+ * 開発用のホストか（localhost / 127.0.0.1 / *.local / *.test / *.localhost）。
+ *
+ * @return bool
+ */
+function _lish_is_dev_host()
+{
+    $host = (string) wp_parse_url(home_url(), PHP_URL_HOST);
+    if (in_array($host, array('localhost', '127.0.0.1', '[::1]', '::1'), true)) {
+        return true;
+    }
+    return (bool) preg_match('/\.(local|test|localhost)$/', $host);
+}

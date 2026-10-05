@@ -9,6 +9,27 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 
 ---
 
+## [1.3.0] - 2026-10-05
+
+SEO プラグインとの OGP 重複の防止と、`.git` で自動更新が止まったときの通知を追加。
+
+### Changed
+
+- **SEO プラグインが有効なら description / OGP / Twitter Card を出さない**（`inc/head.php`）
+  - 対象: All in One SEO / Yoast SEO / Rank Math / SEOPress。出力元が2つになり値が食い違うのを防ぐ
+  - `lish/enable_ogp` の既定値が「SEO プラグインが無ければ `true`」になった。両方出したい案件は子で `true` を返す（従来どおり最優先）
+  - SEO プラグインを入れていない案件の出力は変わらない
+
+### Added
+
+- `lish_seo_plugin_active()` と `lish/seo_plugin_active` フィルタ（判定の上書き）
+- **`.git` で自動更新が止まっているときの管理画面通知**（`inc/updater/updater.php`）
+  - `lish/` に `.git` があるサーバーで、ダッシュボードとテーマ画面に警告を出す（`update_themes` 権限のユーザーのみ）
+  - 開発用ホスト（localhost / `*.local` / `*.test` / `*.localhost`）では出さない。`lish/vcs_notice` で止められる
+- `docs/RELEASE.md`: リリース作成時に「Set as the latest release」を確認する手順
+
+---
+
 ## [1.2.1] - 2026-10-01
 
 ドキュメントのみの更新（自動更新の初回動作確認を兼ねる）。テーマの動作・出力は変更していない。
@@ -165,6 +186,7 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 - `get_the_custom_excerpt()` → `lish_excerpt()`（2.0.0 で削除予定）
 - `my_theme_breadcrumbs()` → `lish_breadcrumb()`（2.0.0 で削除予定）
 
+[1.3.0]: https://github.com/lishweb/lish/releases/tag/v1.3.0
 [1.2.1]: https://github.com/lishweb/lish/releases/tag/v1.2.1
 [1.2.0]: https://github.com/lishweb/lish/releases/tag/v1.2.0
 [1.1.0]: https://github.com/lishweb/lish/releases/tag/v1.1.0

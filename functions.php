@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 
 // ===== バージョン =====
 // style.css の Version: と必ず同期させる（リリース時のチェック項目）。
-define('LISH_VERSION', '1.2.1');
+define('LISH_VERSION', '1.3.0');
 
 // ===== 最低動作要件 =====
 define('LISH_MIN_PHP', '8.0');

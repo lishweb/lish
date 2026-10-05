@@ -94,11 +94,31 @@ function lish_get_ogp_data()
 }
 
 /**
+ * SEO プラグインが有効か（1.3.0〜）。
+ *
+ * 有効なら Lish の description / OGP を既定で出さない（出力元が2つになり、値が食い違うのを防ぐ）。
+ * 対象: All in One SEO / Yoast SEO / Rank Math / SEOPress。
+ *
+ * @return bool
+ */
+function lish_seo_plugin_active()
+{
+    $active = defined('AIOSEO_VERSION')     // All in One SEO
+        || defined('WPSEO_VERSION')         // Yoast SEO
+        || class_exists('RankMath')         // Rank Math
+        || defined('SEOPRESS_VERSION');     // SEOPress
+
+    return (bool) apply_filters('lish/seo_plugin_active', $active);
+}
+
+/**
  * description / OGP / Twitter Card を出力する。
+ *
+ * SEO プラグインが有効なときは出さない（1.3.0〜）。子で `lish/enable_ogp` を true にすれば出す。
  */
 function lish_render_ogp()
 {
-    if (!apply_filters('lish/enable_ogp', true)) {
+    if (!apply_filters('lish/enable_ogp', !lish_seo_plugin_active())) {
         return;
     }
 

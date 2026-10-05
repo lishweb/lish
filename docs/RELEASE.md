@@ -60,7 +60,8 @@ git archive --prefix=lish/ -o lish-1.2.1.zip v1.2.1
 6. **Release label** を選ぶ
    - 本番配布: **None**（最新版として各サイトに配られる）
    - 試験配布: **Pre-release**（各サイトには配られない）
-7. **Publish release**
+7. 本番配布（None）のときは **Set as the latest release** にチェックが入っていることを確認する（入っていないと「最新版」にならず、各サイトに配られない）
+8. **Publish release**
 
 > zip を添付し忘れると、サイト側は「更新なし」と判断する（壊れはしない）。後から添付すれば次回のチェックで配られる。
 
