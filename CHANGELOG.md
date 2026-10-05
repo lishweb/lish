@@ -9,6 +9,14 @@ Lish 親テーマの変更履歴。[Keep a Changelog](https://keepachangelog.com
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- `docs/RELEASE.md`: Release label の説明を現在の GitHub 画面（None / Pre-release / Latest）に合わせた。本番配布は **Latest** を選ぶ（None だと最新版にならず配られない）
+
+---
+
 ## [1.3.0] - 2026-10-05
 
 SEO プラグインとの OGP 重複の防止と、`.git` で自動更新が止まったときの通知を追加。

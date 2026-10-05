@@ -55,13 +55,15 @@ git archive --prefix=lish/ -o lish-1.2.1.zip v1.2.1
 1. https://github.com/lishweb/lish/releases/new を開く
 2. **Choose a tag** で `v1.2.1` を選ぶ
 3. **Release title**: `Lish 1.2.1`
-4. 説明欄に `CHANGELOG.md` の該当項目を貼る
+4. 説明欄（Describe this release）に `CHANGELOG.md` の該当項目を貼る（空でも配布には影響しない）
 5. **Attach binaries** に `lish-1.2.1.zip` をドラッグ（ファイル名は `lish-` で始まり `.zip` で終わること）
 6. **Release label** を選ぶ
-   - 本番配布: **None**（最新版として各サイトに配られる）
+   - 本番配布: **Latest**（最新版として各サイトに配られる）
    - 試験配布: **Pre-release**（各サイトには配られない）
-7. 本番配布（None）のときは **Set as the latest release** にチェックが入っていることを確認する（入っていないと「最新版」にならず、各サイトに配られない）
-8. **Publish release**
+   - **None は選ばない**。None だと「最新版」にならず、各サイトに配られない（1.2.1・1.3.0 で発生）
+7. **Publish release**
+8. 公開後、https://github.com/lishweb/lish/releases で今回の版に **Latest** の印が付いていることを確認する。
+   付いていなければ、そのリリースの編集（鉛筆アイコン）→ Release label を **Latest** → **Update release**
 
 > zip を添付し忘れると、サイト側は「更新なし」と判断する（壊れはしない）。後から添付すれば次回のチェックで配られる。
 
